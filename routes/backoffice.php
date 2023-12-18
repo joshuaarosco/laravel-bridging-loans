@@ -70,6 +70,8 @@ Route::group(['middleware' => ["backoffice.auth"/*, "backoffice.superUserOnly"*/
 
             Route::get('current',['as' => "current",'uses' => "LoanApplicationController@current"]);
             Route::post('current',['uses' => "LoanApplicationController@updateCurrent"]);
+            
+            Route::get('cancel/{id}',['as' => "cancel",'uses' => "LoanApplicationController@cancel"]);
 
             Route::get('history',['as' => "history",'uses' => "LoanApplicationController@history"]);
             
@@ -83,6 +85,8 @@ Route::group(['middleware' => ["backoffice.auth"/*, "backoffice.superUserOnly"*/
         Route::get('/',['as' => "list",'uses' => "LoanApplicationController@list"]);
         Route::get('view/{id}',['as' => "view",'uses' => "LoanApplicationController@view"]);
         Route::post('view/{id}',['uses' => "LoanApplicationController@update"]);
+        Route::get('approve/{id}',['as' => "approve", 'uses' => "LoanApplicationController@approve"]);
+        Route::get('delete/{id}',['as' => "delete",'uses' => "LoanApplicationController@delete"]);
         Route::get('report',['as' => "report",'uses' => "LoanApplicationController@report"]);
     });
 

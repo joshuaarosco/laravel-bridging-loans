@@ -48,6 +48,7 @@
                         <td class="v-align-middle bold" width="5%">#</td>
                         <td class="v-align-middle bold" width="20%">Title</td>
                         <td class="v-align-middle bold" width="30%">Interest Rate</td>
+                        <td class="v-align-middle bold" width="30%">Loan Limit</td>
                         <td class="v-align-middle bold text-right" width="15%">Actions</td>
                     </tr>
                     @forelse($loanTypes as $index => $loanType)
@@ -55,6 +56,7 @@
                         <td>{{$index+1}}</td>
                         <td class="v-align-middle">{{$loanType->title}}</td>
                         <td class="v-align-middle">{{$loanType->interest}}% per {{$loanType->rate}}</td>
+                        <td class="v-align-middle">{{number_format($loanType->loan_limit,2)}}</td>
                         <td class="text-right">
                             <button
                             class="btn btn-default btn-rounded btn-xs btn-edit"
@@ -154,11 +156,14 @@ $(function() {
                     title,
                     interest,
                     rate,
+                    loan_limit,
                 } = data.datas;
+                console.log(data.datas);
                 $(".type-id").val(id);
                 $(".type-title").val(title);
                 $(".type-interest").val(interest);
                 $(".type-rate").val(rate);
+                $(".type-loan_limit").val(loan_limit);
                 $(".load-modal").hide();
             },
             error: function(error){
@@ -171,6 +176,7 @@ $(function() {
         $(".type-title").val('');
         $(".type-interest").val('');
         $(".type-rate").val('');
+        $(".type-loan_limit").val('');
         $(".load-modal").hide();
     });
     $(".btn-delete").on("click",function(){

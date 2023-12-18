@@ -36,3 +36,14 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group form-group-default required {{$errors->has('loan_limit')?'has-error':null}}">
+            <label>Loan Limit</label>
+            <input type="decimal" min="0" class="form-control {{Str::lower($title)}}-loan_limit" name="loan_limit" value="{{old('loan_limit')}}" id="loan_limit" placeholder="" maxlength="30" required>
+            @if($errors->has('loan_limit'))
+            <label class="error" for="loan_limit">{{$errors->first('loan_limit')}}</label>
+            @endif
+        </div>
+    </div>
+</div>

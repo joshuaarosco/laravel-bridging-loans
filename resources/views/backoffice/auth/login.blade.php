@@ -55,9 +55,9 @@
           </div>
           <button class="btn btn-success btn-cons m-t-10" type="submit">Sign in</button><br>
         </form>
-        <!-- <div class="m-t-10">
+        <div class="m-t-10">
           <a href="{{ route('backoffice.auth.sign_up') }}" class="normal">Not a member yet? Signup now.</a>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>

@@ -148,7 +148,7 @@
               @endif
             </div>
           </div>
-          <hr>
+          <!-- <hr>
           <div class="row">
             <div class="col-md-12">
               <p>Visit the <a href="https://invoice-staging.xendit.co/od/multi-pce" target="_blank">Payment Link</a> and attach the successful payment screenshot to pay the Membership Application Fee 
@@ -167,7 +167,7 @@
               @endif
             </div>
           </div>
-          <p><small>Pay the membership fee amounting P100 and initial fee of P300 for mutual aid fund.</small></p>
+          <p><small>Pay the membership fee amounting P100 and initial fee of P300 for mutual aid fund.</small></p> -->
           <div class="row">
             <div class="col-md-12 no-padding sm-p-l-10">
               <div class="checkbox">

@@ -33,11 +33,13 @@ class LoanApplicationController extends Controller
         $this->data['title'] = 'Loan Application';
         $this->data['loan_statuses'] = [
             'new' => 'New Loan Application',
-            'pending' => 'Awaiting Credit Committee Approval',
+            'pending_coborrower_approval' => 'Pending Co-Borrower Approval',
+            'pending' => 'Awaiting Approval',
             'awaiting_disclosure_statement_approval' => 'Awaiting for Disclosure Statement Approval',
             'awaiting_chair_gm' => 'Awaiting Chair/General Manager Approval', 
             'approved' => 'Approved/Outstanding',
             'rejected' => 'Rejected',
+            'cancelled' => 'Cancelled',
             'completed' => 'Loan Complete'];
 
         $this->repo = $repo;
@@ -70,7 +72,7 @@ class LoanApplicationController extends Controller
         if(auth()->user()->type == 'member'){
             return view('backoffice.pages.loan.new_application', $this->data);
         }else{
-            return view('backoffice.pages.loan.application', $this->data);
+            return view('backoffice.pages.loan.new_application', $this->data);
         }
     }
 
@@ -95,10 +97,11 @@ class LoanApplicationController extends Controller
         if(!$this->data['loan']){
             return redirect()->route('backoffice.loan.list');
         }
-        return view('backoffice.pages.loan.application', $this->data);
+        return view('backoffice.pages.loan.new_application', $this->data);
     }
 
     public function update(Request $request, $id){
+        // dd($request->all());
         $this->data['loan'] = $this->CRUDservice->save($request, $this->repo);
         return redirect()->back();
     }
@@ -112,5 +115,19 @@ class LoanApplicationController extends Controller
         $this->data['title'] = 'Loan Report';
         $this->data['loans'] = $this->repo->fetchWithFilter($request);
         return view('backoffice.pages.loan.report', $this->data);
+    }
+
+    public function cancel($id){
+        $this->repo->cancel($id);
+        session()->flash('notification-status', "info");
+        session()->flash('notification-msg', "Successfully Cancelled.");
+        return redirect()->back();
+    }
+
+    public function approve($id){
+        $this->repo->approve($id);
+        session()->flash('notification-status', "info");
+        session()->flash('notification-msg', "Successfully Approved.");
+        return redirect()->back();
     }
 }

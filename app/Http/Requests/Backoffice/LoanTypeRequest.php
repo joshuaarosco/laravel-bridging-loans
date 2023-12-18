@@ -29,6 +29,7 @@ class LoanTypeRequest extends FormRequest
             'title' => "required",
             'interest' => "required",
             'rate' => "required",
+            'loan_limit' => "required",
         ];
     }
 }

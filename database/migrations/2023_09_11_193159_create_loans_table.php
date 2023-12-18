@@ -46,10 +46,15 @@ class CreateLoansTable extends Migration
             $table->integer('no_of_dependents')->nullable();
             $table->string('contact_number')->nullable();
 
+            $table->unsignedBigInteger('co1_id')->nullable();
+            $table->string('co1_status')->nullable();
             $table->string('co1_name')->nullable();
             $table->string('co1_address')->nullable();
             $table->string('co1_date_employed')->nullable();
             $table->string('co1_position')->nullable();
+
+            $table->unsignedBigInteger('co2_id')->nullable();
+            $table->string('co2_status')->nullable();
             $table->string('co2_name')->nullable();
             $table->string('co2_address')->nullable();
             $table->string('co2_date_employed')->nullable();
@@ -155,6 +160,8 @@ class CreateLoansTable extends Migration
             $table->softDeletes();
             
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('co1_id')->references('id')->on('users');
+            $table->foreign('co2_id')->references('id')->on('users');
             $table->foreign('type_id')->references('id')->on('loan_types');
         });
     }

@@ -14,3 +14,9 @@
 <input type="hidden" class="form-control" name="employment_status" value="{{$loan?$loan->employment_status:auth()->user()->member->employment_status}}" {{$loan?"readonly":""}}>
 <input type="hidden" step="any" class="form-control" name="no_of_dependents" value="{{$loan?$loan->no_of_dependents:auth()->user()->member->no_of_dependents}}" {{$loan?"readonly":""}}>
 <input type="hidden" class="form-control" name="contact_number" value="{{$loan?$loan->contact_number:auth()->user()->member->contact_number}}" {{$loan?"readonly":""}}>
+@if($loan)
+<input type="hidden" name="type_id" value="{{$loan->type_id}}">
+<input type="hidden" name="id" value="{{$loan->id}}">
+<input type="hidden" name="co1_id" value="{{$loan->co1_id}}">
+<input type="hidden" name="co2_id" value="{{$loan->co2_id}}">
+@endif

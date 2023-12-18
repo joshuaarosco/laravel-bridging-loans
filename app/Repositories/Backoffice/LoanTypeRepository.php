@@ -20,6 +20,7 @@ class LoanTypeRepository extends Model implements ILoanTypeRepository
             $data = $this->find($request->id)?:new self;
             $data->title = $request->title;
             $data->interest = $request->interest;
+            $data->loan_limit = $request->loan_limit;
             $data->rate = $request->rate;
             
             $data->save();

@@ -17,6 +17,7 @@ class CreateLoanTypesTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->double('interest',8,2);
+            $table->double('loan_limit',8,2)->nullable();
             $table->string('rate');
 
             $table->timestamps();

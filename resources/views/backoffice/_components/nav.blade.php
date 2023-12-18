@@ -53,7 +53,7 @@
                         <a href="{{route('backoffice.loan_type.index')}}">Types</a> <span class="icon-thumbnail">t</span>
                     </li>
                     <li class="{{in_array(request()->route()->getName(),['backoffice.loan.report'])?'open active':''}}">
-                        <a href="{{route('backoffice.loan.report')}}">Report</a> <span class="icon-thumbnail">t</span>
+                        <a href="{{route('backoffice.loan.report')}}">Report</a> <span class="icon-thumbnail">r</span>
                     </li>
                     @endif
                 </ul>

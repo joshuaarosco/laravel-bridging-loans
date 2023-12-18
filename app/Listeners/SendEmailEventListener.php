@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Mail\CoBorrower1;
+use App\Mail\CoBorrower2;
 use App\Mail\LoanApproved;
 use App\Mail\LoanCompleted;
 use App\Mail\LoanRejected;
@@ -59,7 +61,18 @@ class SendEmailEventListener
                     );
     
                 break;
-            
+                
+
+            case 'coborrower_notif':
+                \Mail::to($event->data->co1->email)->send(
+                    new CoBorrower1($event->data)
+                );
+
+                \Mail::to($event->data->co2->email)->send(
+                    new CoBorrower2($event->data)
+                );
+
+                break;
             default:
                 // code...
                 break;

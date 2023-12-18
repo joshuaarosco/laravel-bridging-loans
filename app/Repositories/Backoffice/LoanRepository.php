@@ -8,17 +8,21 @@ use App\Events\SendEmailEvent;
 use App\Logic\ImageUploader as UploadLogic;
 use App\Models\Backoffice\Loan as Model;
 use App\Models\Backoffice\ShareCapital;
-use DB, Str;
+use DB, Str, Collection;
 
 class LoanRepository extends Model implements ILoanRepository
 {
     public $share_capital = 0.05;
     public function fetch($id){
-        return $this->where('user_id', $id)->where('loan_status', '!=', 'completed')->first();
+        return $this->where('user_id', $id)->whereNotIn('loan_status', ['completed', 'cancelled'])->first();
     }
 
     public function fetchAll(){
         return $this->orderBy('updated_at', 'DESC')->get();
+    }
+
+    public function fetchCurrentLoans(){
+        return $this->whereIn('loan_status',['pending','approved'])->orderBy('updated_at', 'DESC')->get();
     }
 
     public function fetchWithFilter($request){
@@ -43,7 +47,7 @@ class LoanRepository extends Model implements ILoanRepository
 
     public function fetchHistory(){
         return $this->orderBy('updated_at', 'DESC')
-                    ->where('loan_status','completed')
+                    ->whereIn('loan_status',['completed','cancelled'])
                     ->where('user_id', auth()->user()->id)
                     ->get();
     }
@@ -60,13 +64,16 @@ class LoanRepository extends Model implements ILoanRepository
         DB::beginTransaction();
         try {
             $data = $this->find($request->id)?:new self;
-
+            
             if(!$request->has('id')){ 
                 $data->user_id = auth()->user()->id;
                 $data->loan_status = 'pending';
+                $data->co1_status = 'pending';
+                $data->co2_status = 'pending';
             }else{
                 
             }
+
             if($request->submit == 'Approve'){
                 if($data->loan_status == 'awaiting_chair_gm'){
                     // Notification loan approved
@@ -95,6 +102,14 @@ class LoanRepository extends Model implements ILoanRepository
                 // Notification loan completed
                 event(new SendEmailEvent($data,'loan_completed'));
                 $data->loan_status = 'completed';
+            }else if($request->submit == 'Co-Borrower 1 Approve'){
+                $data->co1_status = 'approve';
+            }else if($request->submit == 'Co-Borrower 2 Approve'){
+                $data->co2_status = 'approve';
+            }else if($request->submit == 'Co-Borrower 1 Reject'){
+                $data->co1_status = 'reject';
+            }else if($request->submit == 'Co-Borrower 2 Reject'){
+                $data->co2_status = 'reject';
             }
             
             $data->pb_no = $request->pb_no;
@@ -124,13 +139,17 @@ class LoanRepository extends Model implements ILoanRepository
             $data->contact_number = $request->contact_number;
 
             $data->co1_name = $request->co1_name;
+            $data->co1_id = $request->co1_id;
             $data->co1_address = $request->co1_address;
             $data->co1_date_employed = $request->co1_date_employed;
             $data->co1_position = $request->co1_position;
+
+            $data->co2_id = $request->co2_id;
             $data->co2_name = $request->co2_name;
             $data->co2_address = $request->co2_address;
             $data->co2_date_employed = $request->co2_date_employed;
             $data->co2_position = $request->co2_position;
+
             $data->co1_contact_number = $request->co1_contact_number;
             $data->co1_employer = $request->co1_employer;
             $data->co1_monthly_salary = $request->co1_monthly_salary;
@@ -241,6 +260,10 @@ class LoanRepository extends Model implements ILoanRepository
             
             $data->save();
 
+            if($data->co1_status == 'pending' || $data->co2_status == 'pending'){
+                event(new SendEmailEvent($data,'coborrower_notif'));
+            }
+
             DB::commit();
 
             return $data;
@@ -287,5 +310,29 @@ class LoanRepository extends Model implements ILoanRepository
         file_put_contents($file, $image_base64);
 
         return "storage/signatures/".$id.".".$image_type_png;
+    }
+
+    public function cancel($id){
+        $loan = self::find($id);
+        $loan->loan_status = 'cancelled';
+        $loan->save();
+    }
+
+    public function approve($id){
+        $loan = self::find($id);
+        $loan->loan_status = 'approved';
+        $shareCapital = ShareCapital::where('user_id', $loan->user_id)->first();
+        $shareCapital->share_capital += ($loan->oath_1 * $this->share_capital);
+        $shareCapital->save();
+
+        event(new SendEmailEvent($loan,'loan_approved'));
+        $loan->save();
+    }
+
+    public function fetchLoansWaitingForMyApproval(){
+        return self::where('loan_status', 'pending')
+                    ->where('co1_id', auth()->user()->id)
+                    ->orWhere('co2_id', auth()->user()->id)
+                    ->get();
     }
 }

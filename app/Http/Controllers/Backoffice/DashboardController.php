@@ -16,6 +16,17 @@ class DashboardController extends Controller
         $this->loanTyperepo = $loanTyperepo;
         $this->data['loanTypes'] = $this->loanTyperepo->fetch();
         $this->data['loans'] = $this->loanRepo->fetchDashLoans();
+        $this->data['loan_statuses'] = [
+            'new' => 'New Loan Application',
+            'pending_coborrower_approval' => 'Pending Co-Borrower Approval',
+            'pending' => 'Awaiting Approval',
+            'awaiting_disclosure_statement_approval' => 'Awaiting for Disclosure Statement Approval',
+            'awaiting_chair_gm' => 'Awaiting Chair/General Manager Approval', 
+            'approved' => 'Approved/Outstanding',
+            'rejected' => 'Rejected',
+            'cancelled' => 'Cancelled',
+            'completed' => 'Loan Complete'];
+        $this->data['title'] = 'Dashboard';
     }
     //Do some magic
     public function index(){
@@ -36,10 +47,12 @@ class DashboardController extends Controller
         }
 
         $this->data['nextDueDate'] = null;
+        $this->data['pendingLoan'] = $this->data['loans']->where('loan_status', 'pending')->where('user_id', auth()->user()->id)->first();
         if($this->data['loanBalance'] > 0){
-            $time = strtotime("2010.12.11");
             $this->data['nextDueDate'] = date("M Y", strtotime("+1 month"));
         }
+        $this->data['loans'] = $this->loanRepo->fetchCurrentLoans();
+        $this->data['awaiting_approval_loans'] = $this->loanRepo->fetchLoansWaitingForMyApproval();
     	return view('backoffice.index', $this->data);
     }
 }
